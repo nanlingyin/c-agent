@@ -102,12 +102,20 @@ class CAgentApp {
         });
 
         file1Input.addEventListener('change', (e) => {
-            this.handleFileSelect(e.target, 'file1Info');
+            this.handleFileSelect(e.target, 'file1Info', 'code1Content', 'file1Name');
         });
 
         file2Input.addEventListener('change', (e) => {
-            this.handleFileSelect(e.target, 'file2Info');
+            this.handleFileSelect(e.target, 'file2Info', 'code2Content', 'file2Name');
         });
+
+        // 预览切换事件
+        const togglePreviewBtn = document.getElementById('togglePreview');
+        if (togglePreviewBtn) {
+            togglePreviewBtn.addEventListener('click', () => {
+                this.toggleCodePreview();
+            });
+        }
     }
 
     // 设置历史记录事件
@@ -335,21 +343,113 @@ class CAgentApp {
     }
 
     // 处理文件选择
-    handleFileSelect(input, infoId) {
+    handleFileSelect(input, infoId, contentId, nameId) {
         const file = input.files[0];
         const infoElement = document.getElementById(infoId);
+        const contentElement = document.getElementById(contentId);
+        const nameElement = document.getElementById(nameId);
+        const uploadContainer = input.closest('.file-upload');
 
         if (file) {
+            // 显示文件信息
             infoElement.textContent = `已选择: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
             infoElement.style.display = 'block';
+
+            // 添加选中状态样式
+            uploadContainer.classList.add('selected');
+
+            // 读取文件内容并显示预览
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                contentElement.textContent = e.target.result;
+                nameElement.textContent = file.name;
+
+                // 应用语法高亮
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(contentElement);
+                }
+
+                // 检查是否两个文件都已选择，如果是则显示预览区域
+                const file1 = document.getElementById('file1').files[0];
+                const file2 = document.getElementById('file2').files[0];
+                if (file1 && file2) {
+                    this.showCodePreview();
+                }
+            };
+
+            reader.onerror = () => {
+                this.showNotification('文件读取失败，请重试', 'error');
+            };
+
+            reader.readAsText(file);
         } else {
+            // 清除文件信息和预览
             infoElement.style.display = 'none';
+            uploadContainer.classList.remove('selected');
+            contentElement.textContent = '';
+            nameElement.textContent = '';
+            
+            // 隐藏预览区域
+            this.hideCodePreview();
         }
 
-        // 检查是否两个文件都已选择
+        // 检查是否两个文件都已选择，更新分析按钮状态
         const file1 = document.getElementById('file1').files[0];
         const file2 = document.getElementById('file2').files[0];
         document.getElementById('analyzeBtn').disabled = !(file1 && file2);
+    }
+
+    // 显示代码预览区域
+    showCodePreview() {
+        const previewSection = document.getElementById('codePreviewSection');
+        const toggleBtn = document.getElementById('togglePreview');
+        
+        previewSection.style.display = 'block';
+        
+        // 更新切换按钮文本
+        const buttonText = toggleBtn.querySelector('span[data-lang-key="toggle-preview"]');
+        const buttonIcon = toggleBtn.querySelector('i');
+        
+        if (this.currentLanguage === 'zh-cn') {
+            buttonText.textContent = '隐藏预览';
+        } else {
+            buttonText.textContent = 'Hide Preview';
+        }
+        buttonIcon.className = 'fas fa-eye-slash';
+    }
+
+    // 隐藏代码预览区域
+    hideCodePreview() {
+        const previewSection = document.getElementById('codePreviewSection');
+        previewSection.style.display = 'none';
+    }
+
+    // 切换代码预览显示状态
+    toggleCodePreview() {
+        const previewSection = document.getElementById('codePreviewSection');
+        const toggleBtn = document.getElementById('togglePreview');
+        const buttonText = toggleBtn.querySelector('span[data-lang-key="toggle-preview"]');
+        const buttonIcon = toggleBtn.querySelector('i');
+        
+        const isHidden = previewSection.style.display === 'none';
+        
+        if (isHidden) {
+            previewSection.style.display = 'block';
+            if (this.currentLanguage === 'zh-cn') {
+                buttonText.textContent = '隐藏预览';
+            } else {
+                buttonText.textContent = 'Hide Preview';
+            }
+            buttonIcon.className = 'fas fa-eye-slash';
+        } else {
+            previewSection.style.display = 'none';
+            if (this.currentLanguage === 'zh-cn') {
+                buttonText.textContent = '显示预览';
+            } else {
+                buttonText.textContent = 'Show Preview';
+            }
+            buttonIcon.className = 'fas fa-eye';
+        }
     }
 
     // 分析代码相似度
@@ -539,6 +639,10 @@ class CAgentApp {
                 'upload-file1': '选择第一个文件',
                 'upload-file2': '选择第二个文件',
                 'analyze-btn': '分析相似度',
+                'code-preview-title': '代码预览',
+                'toggle-preview': '隐藏预览',
+                'file1-preview': '文件1',
+                'file2-preview': '文件2',
                 'history-title': '操作历史',
                 'refresh': '刷新',
                 'loading': '加载中...',
@@ -564,6 +668,10 @@ class CAgentApp {
                 'upload-file1': 'Select First File',
                 'upload-file2': 'Select Second File',
                 'analyze-btn': 'Analyze Similarity',
+                'code-preview-title': 'Code Preview',
+                'toggle-preview': 'Hide Preview',
+                'file1-preview': 'File 1',
+                'file2-preview': 'File 2',
                 'history-title': 'Operation History',
                 'refresh': 'Refresh',
                 'loading': 'Loading...',

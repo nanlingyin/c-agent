@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 import uuid
 
 app = Flask(__name__)
-app.secret_key = 'c-agent-secret-key-2024'
+app.secret_key = os.environ.get('SECRET_KEY', 'c-agent-secret-key-2024')
 
 # 配置文件路径
 CONFIG_PATH = "config.json"
@@ -16,6 +16,13 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'c', 'txt'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# 生产环境配置
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['DEBUG'] = False
+    app.config['TESTING'] = False
+else:
+    app.config['DEBUG'] = True
 
 # C 语言关键字字典 - 从原始代码移植
 C_KEYWORDS = {
@@ -181,14 +188,11 @@ C_KEYWORDS = {
     }
 }
 
-# 初始化 OpenAI 客户端
-# ⚠️ 重要提示：请替换为你自己的API密钥！
-# 🔑 获取API Key: https://platform.openai.com/api-keys
-# 🌍 如果在国内，可能需要使用代理服务或第三方API端点
-
+# 初始化 OpenAI 客户端 - 支持环境变量
+# 生产环境建议使用环境变量配置API密钥
 client = OpenAI(
-    api_key="sk-uABuw9v37uhQ9jTYSxxT2rzQAcywTg4TDHDID9AnyHCdn67G",  # 🔑 请替换为你的API密钥
-    base_url="https://api.ephone.chat/v1"  # 🌍 可替换为官方地址: https://api.openai.com/v1
+    api_key=os.environ.get('OPENAI_API_KEY', "sk-uABuw9v37uhQ9jTYSxxT2rzQAcywTg4TDHDID9AnyHCdn67G"),
+    base_url=os.environ.get('OPENAI_BASE_URL', "https://api.ephone.chat/v1")
 )
 
 def load_config():
@@ -525,4 +529,10 @@ def get_config():
 if __name__ == '__main__':
     # 确保上传目录存在
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # 生产环境配置
+    host = os.environ.get('HOST', '0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
+    
+    app.run(debug=debug, host=host, port=port)

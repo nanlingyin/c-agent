@@ -136,6 +136,40 @@
                             <span data-lang-key="analyze-btn">分析相似度</span>
                         </button>
                     </form>
+                    
+                    <!-- 代码预览区域 -->
+                    <div class="code-preview-section" id="codePreviewSection" style="display: none;">
+                        <div class="preview-header">
+                            <h3 data-lang-key="code-preview-title">代码预览</h3>
+                            <div class="preview-controls">
+                                <button id="togglePreview" class="toggle-btn">
+                                    <i class="fas fa-eye"></i>
+                                    <span data-lang-key="toggle-preview">隐藏预览</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-preview-container">
+                            <div class="code-preview-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-file-code"></i>
+                                    <span id="file1Name" data-lang-key="file1-preview">文件1</span>
+                                </div>
+                                <div class="code-content">
+                                    <pre><code class="language-c" id="code1Content"></code></pre>
+                                </div>
+                            </div>
+                            <div class="code-preview-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-file-code"></i>
+                                    <span id="file2Name" data-lang-key="file2-preview">文件2</span>
+                                </div>
+                                <div class="code-content">
+                                    <pre><code class="language-c" id="code2Content"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="similarity-results" id="similarityResults">
                         <!-- 结果将动态插入这里 -->
                     </div>

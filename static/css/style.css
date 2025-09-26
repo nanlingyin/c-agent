@@ -186,7 +186,20 @@ body {
     animation: messageSlideIn 0.3s ease-out;
 }
 
-@keyframes messageSlideIn {
+/* 用户消息动画 - 从右侧滑入 */
+@keyframes messageSlideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* AI助手消息动画 - 从左侧滑入 */
+@keyframes messageSlideInLeft {
     from {
         opacity: 0;
         transform: translateX(-20px);
@@ -195,6 +208,20 @@ body {
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+/* 用户消息样式 - 右对齐 */
+.message.user {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    animation: messageSlideInRight 0.3s ease-out;
+}
+
+/* AI助手消息样式 - 左对齐 */
+.message.assistant {
+    flex-direction: row;
+    justify-content: flex-start;
+    animation: messageSlideInLeft 0.3s ease-out;
 }
 
 .message-avatar {
@@ -211,7 +238,6 @@ body {
 .message.user .message-avatar {
     background: var(--primary-color);
     color: var(--text-light);
-    order: 1;
 }
 
 .message.assistant .message-avatar {
@@ -226,16 +252,21 @@ body {
     max-width: 70%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     line-height: 1.5;
+    word-wrap: break-word;
 }
 
 .message.user .message-content {
     background: var(--primary-color);
     color: var(--text-light);
     border-bottom-right-radius: 0.25rem;
+    margin-left: auto;
 }
 
 .message.assistant .message-content {
+    background: var(--light-card);
+    color: var(--text-primary);
     border-bottom-left-radius: 0.25rem;
+    margin-right: auto;
 }
 
 .chat-input-area {
@@ -870,4 +901,194 @@ pre {
 pre code {
     background: transparent;
     padding: 0;
+}
+
+/* 代码预览区域样式 */
+.code-preview-section {
+    margin: 2rem 0;
+    background: var(--light-card);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.preview-header {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    color: var(--text-light);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.preview-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.code-preview-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-height: 500px;
+}
+
+.code-preview-panel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+}
+
+.code-preview-panel:last-child {
+    border-right: none;
+}
+
+.panel-header {
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.panel-header i {
+    color: var(--primary-color);
+}
+
+.code-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #f8fafc;
+}
+
+.code-content pre {
+    margin: 0;
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    border-radius: 0;
+    overflow-x: auto;
+    min-height: 100%;
+}
+
+.code-content pre code {
+    color: inherit;
+    background: transparent;
+    padding: 0;
+    white-space: pre;
+}
+
+/* 代码预览响应式设计 */
+@media (max-width: 768px) {
+    .code-preview-container {
+        grid-template-columns: 1fr;
+        max-height: 600px;
+    }
+    
+    .code-preview-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .code-preview-panel:last-child {
+        border-bottom: none;
+    }
+    
+    .preview-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .preview-controls {
+        justify-content: center;
+    }
+}
+
+/* 深色主题下的代码预览样式 */
+body.dark-theme .code-preview-section {
+    background: var(--dark-card);
+    border-color: #4b5563;
+}
+
+body.dark-theme .panel-header {
+    background: #374151;
+    border-color: #4b5563;
+    color: var(--text-light);
+}
+
+body.dark-theme .code-content {
+    background: #374151;
+}
+
+body.dark-theme .code-content pre {
+    background: #0f172a;
+}
+
+/* 文件选择后的样式增强 */
+.file-upload.selected .file-label {
+    border-color: var(--success-color);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.file-upload.selected .file-label i {
+    color: var(--success-color);
+}
+
+.file-upload.selected .file-label span {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+/* 滚动条样式优化 */
+.code-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.code-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.code-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.code-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
 }

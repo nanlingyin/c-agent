@@ -1,0 +1,21 @@
+Similarity: Compared test_file1.c and test_file2.c, similarity: 1.0000
+Language changed to: en
+Language changed to: zh-cn
+Language changed to: en
+Language changed to: zh-cn
+AI Chat: User said '你好...', AI responded
+AI Chat: User said '你是什么大语言模型...', AI responded
+AI Chat: User said '你好。想问下c语言有哪些关键字...', AI responded
+AI Chat: User said '请跟我讲讲用法...', AI responded
+Help: Queried keyword 'printf'
+Similarity: Compared test_file1.c and test_file2.c, similarity: 1.0000
+Language changed to: en
+Language changed to: zh-cn
+Language changed to: en
+AI Chat: User said 'hello...', AI responded
+Language changed to: zh-cn
+Language changed to: en
+Language changed to: zh-cn
+AI Chat: User said '你好...', AI responded
+AI Chat: User said '请问可以教我怎么学习c语言吗...', AI responded
+Help: Queried keyword 'stdio.h'
